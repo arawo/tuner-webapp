@@ -41,7 +41,7 @@
 
             //取得した周波数データを描写する
             function draw() {
-                var bufLen = analyser.frequencyBinCount / 4;
+                var bufLen = analyser.frequencyBinCount;
                 var data = new Uint8Array(bufLen);
                 analyser.getByteFrequencyData(data);
 
@@ -56,15 +56,17 @@
                 var sliceWidth = canvas.width * 2 / bufLen;
                 var x = 0;
 
-                let xMax = 0;
+                let iMax = 0;
                 let vMax = 0;
+                let xMax = 0;
 
                 for (var i = 0; i < bufLen; i++) {
 
                     var v = data[i] / 256;
                     if (v > vMax) {
+                        iMax = i;
+                        vMax = v;
                         xMax = x;
-                        vMax = v
                     }
 
                     var y = (1 - v) * canvas.height;
@@ -83,8 +85,8 @@
 
                 ctx.font = "18px serif";
                 ctx.fillStyle = 'rgba(0, 0, 0)';
-                ctx.fillText(xMax, xMax, (1 - vMax) * canvas.height - 5);
-                //ctx.fillText(Math.round(xMax * 2.69179) + "Hz", xMax, (1 - vMax) * canvas.height - 5);
+                ctx.fillText(iMax + "/" + bufLen, xMax, (1 - vMax) * canvas.height - 5);
+                //ctx.fillText(Math.round(iMax * 1.4652014652) + "Hz", xMax, (1 - vMax) * canvas.height - 5);
             }
 
         </script>

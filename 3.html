@@ -1,8 +1,67 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-    </head>
-    <body>
-    </body>
+
+<head>
+    <meta charset="utf-8">
+</head>
+
+<body>
+    <div id="display" style="font-size: x-large;">ボタンを押してください</div>
+    <button id="startButton">スタート</button>
+    <script>
+
+        const REF_PITCH = 440;
+        const SCALE_COUNT = 12;
+        const SCALES = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
+
+        const display = document.querySelector('#display');
+        const startButton = document.querySelector('#startButton');
+
+        let stream;
+        startButton.onclick = async function () {
+            if (stream) return;
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+                //FFT
+                const analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 32768;    //取得するデータのサイズ(配列の大きさ)を決める
+                analyser.smoothingTimeConstant = 0.3;
+                analyser.minDecibels = -90;
+                analyser.maxDecibels = 0;
+
+                // マイクへのアクセス権を取得する
+                stream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        noiseSuppression: true
+                    }
+                });
+                // マイクから集音した音をFFTに入れる
+                let src = audioCtx.createMediaStreamSource(stream);
+                src.connect(analyser);
+
+                const bufLen = analyser.frequencyBinCount;
+                const data = new Uint8Array(bufLen);
+
+                setInterval(function () {
+                    analyser.getByteFrequencyData(data);
+
+                    // let i = data.reduce(function (iMax, i, x, data) {
+                    //     return x > data[iMax] ? i : iMax;
+                    // })
+                    const maxIndex = data.indexOf(Math.max.apply(Math, data));
+                    const freq = Math.round(maxIndex * 1.4652014652 * 1000) / 1000;
+
+                    let temparament = Math.log2(Math.pow(freq / REF_PITCH, 12));
+                    temparament = Math.round(temparament);
+                    
+                    display.innerHTML = SCALES[(temparament + 60) % SCALE_COUNT];
+                }, 300)
+            } catch (err) {
+                console.log(err);
+            }
+        };
+    </script>
+</body>
+
 </html>
