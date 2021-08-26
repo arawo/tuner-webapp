@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <canvas id="canvas" width="1024" height="512" style="border:1px solid #000000;"></canvas>
+        <script>
+            const canvas = document.querySelector("#canvas");
+            const ctx = canvas.getContext("2d");
+
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+            //マイクへのアクセス権を取得する
+            navigator.mediaDevices.getUserMedia({
+                audio: {
+                    noiseSuppression: false
+                },
+                video: false
+            })
+            .then(function(stream) {
+                //マイクから集音した音をFFTに入れる
+                var src = audioCtx.createMediaStreamSource(stream);
+                src.connect(analyser);
+
+                // playbackさせる必要はないのでストリームを繋がない
+                //analyser.connect(audioCtx.destination);
+
+                setInterval(draw, 33);
+            })
+            .catch(function(err) {
+                console.log(err);
+            });
+
+            //FFT
+            var analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 32768;    //取得するデータのサイズ(配列の大きさ)を決める
+            analyser.smoothingTimeConstant = 0.3;
+            analyser.minDecibels = -90;
+            analyser.maxDecibels = 0;
+
+            //取得した周波数データを描写する
+            function draw() {
+                var bufLen = analyser.frequencyBinCount / 4;
+                var data = new Uint8Array(bufLen);
+                analyser.getByteFrequencyData(data);
+
+                ctx.fillStyle = 'rgb(200, 200, 200)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = 'rgb(0, 0, 0)';
+
+                ctx.beginPath();
+
+                var sliceWidth = canvas.width * 2 / bufLen;
+                var x = 0;
+
+                let xMax = 0;
+                let vMax = 0;
+
+                for (var i = 0; i < bufLen; i++) {
+
+                    var v = data[i] / 256;
+                    if (v > vMax) {
+                        xMax = x;
+                        vMax = v
+                    }
+
+                    var y = (1 - v) * canvas.height;
+
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+
+                    x += sliceWidth;
+                }
+
+                ctx.lineTo(canvas.width, canvas.height);
+                ctx.stroke();
+
+                ctx.font = "18px serif";
+                ctx.fillStyle = 'rgba(0, 0, 0)';
+                ctx.fillText(xMax, xMax, (1 - vMax) * canvas.height - 5);
+                //ctx.fillText(Math.round(xMax * 2.69179) + "Hz", xMax, (1 - vMax) * canvas.height - 5);
+            }
+
+        </script>
+    </body>
+</html>
