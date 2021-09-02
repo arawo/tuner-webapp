@@ -4,7 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>チューナー</title>
+    <title>調律くん</title>
+    <meta name="keyword" content="チューナー,チューニング,オンライン,調律,音程,音階,十二平均律,楽器,ピアノ,ヴァイオリン,ギター,ウクレレ">
+    <meta name="description" content="シンプルで軽量なチューナーのWebアプリです。">
     <link rel="icon" href="./favicon.ico">
     <link rel="manifest" href="./manifests/manifest.webmanifest">
     <link rel="stylesheet" href="./css/app.css">
@@ -13,7 +15,7 @@
 
 <body>
     <div class="container">
-        <h1>チューナー</h1>
+        <h1>Tuner</h1>
         <div id="display">
             <article class="tap-to-start">タップして開始</article>
         </div>
@@ -22,7 +24,7 @@
     <script>
         const display = document.querySelector('#display');
         document.body.onclick = function () { appStart(display) }
-        
+
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker
                 .register('./worker.js')

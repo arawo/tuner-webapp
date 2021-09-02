@@ -1,11 +1,24 @@
 
 const REF_PITCH = 440;
 const SCALE_COUNT = 12;
-const SCALES = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
+const SCALES = new Map([
+    ['英・米式', ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']],
+    ['ドレミ式', ['ラ', 'ラ#', 'シ', 'ド', 'ド#', 'レ', 'レ#', 'ミ', 'ファ', 'ファ#', 'ソ', 'ソ#']],
+    ['ドレミ式(12音階)', ['ラ', 'チ', 'シ', 'ド', 'デ', 'レ', 'リ', 'ミ', 'ファ', 'フィ', 'ソ', 'サ']],
+]);
+const SCALE_KEYS = Array.from(SCALES.keys());
 
 const scaleText = document.createElement('div');
 const lampL = document.createElement('span');
 const lampR = document.createElement('span');
+
+let scaleKeyIndex = parseInt(localStorage.getItem('scale_key_index'));
+scaleKeyIndex = isNaN(scaleKeyIndex) ? 0 : scaleKeyIndex;
+
+scaleText.onclick = function (e) {
+    scaleKeyIndex = (scaleKeyIndex + 1) % SCALE_KEYS.length;
+    localStorage.setItem('scale_key_index', scaleKeyIndex);
+};
 
 let stream;
 async function appStart(display) {
@@ -14,8 +27,8 @@ async function appStart(display) {
     display.innerHTML = '';
 
     scaleText.innerText = '？'
-    lampL.innerText = '-'
-    lampR.innerText = '+'
+    lampL.innerText = '♭'
+    lampR.innerText = '#'
     display.append(lampL, scaleText, lampR);
 
     try {
@@ -66,11 +79,14 @@ async function appStart(display) {
 
             const freq = (maxIndex + delta) * audioCtx.sampleRate / analyser.fftSize;
 
-            const temparament = Math.log2(Math.pow(freq / REF_PITCH, SCALE_COUNT));
-            const scaleIndex = Math.round(temparament);
-            const accu = Math.floor((temparament - scaleIndex) * 100) / 100;
+            const temparament = Math.log2(Math.pow(freq / REF_PITCH, SCALE_COUNT)) + 48;
+            const scaleIndex = temparament.toFixed();
+            const accu = (temparament - scaleIndex).toFixed(2);
 
-            scaleText.innerText = SCALES[(scaleIndex + 48) % SCALE_COUNT];
+            const scaleArray = SCALES.get(SCALE_KEYS[scaleKeyIndex]);
+            let scaleHtml = scaleArray[(scaleIndex) % SCALE_COUNT] + Math.abs(parseInt((scaleIndex) / SCALE_COUNT));
+            scaleHtml = scaleHtml.replaceAll('#', '<span class="sup">#</span>');
+            scaleText.innerHTML = scaleHtml;
 
             Array.from(display.children).forEach(function (e) { e.classList = [] });
 
