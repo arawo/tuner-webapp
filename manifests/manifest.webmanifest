@@ -1,13 +1,13 @@
 {
     "lang": "ja-jp",
-    "name": "チューナー",
-    "short_name": "tuner-webapp",
+    "name": "調律くん",
+    "short_name": "調律くん",
     "start_url": "/tuner-webapp/",
     "display": "standalone",
     "orientation": "landscape-primary",
     "background_color": "#fff",
-    "theme_color": "#fff",
-    "description": "シンプルで軽量なチューナーのWebアプリです。",
+    "theme_color": "#000",
+    "description": "シンプルで軽量なチューナーアプリです。",
     "icons": [
       {
         "src": "windows10/SmallTile.scale-100.png",
