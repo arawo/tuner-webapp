@@ -7,7 +7,7 @@ const STATIC_DATA = [
 
 self.addEventListener('install', function (event) {
     event.waitUntil(
-        caches.open('cache_v1')
+        caches.open('cache_v2')
             .then(function (cache) {
                 cache.addAll(STATIC_DATA);
             })

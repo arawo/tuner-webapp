@@ -1,48 +1,47 @@
 
 body {
+    display: flex;
     margin: 0;
-    width: 100vw;
     height: 100vh;
+    justify-content: center;
+    align-items:center;
+    font-size: 25vmin;
     font-family: Arial, Helvetica, sans-serif;
-    text-align: center;
-}
-
-.container {
-    padding-top: 15vh;
-    margin: 0 10%;
+    font-weight: bolder;
+    background-color:beige;
 }
 
 #display {
     display: flex;
     justify-content: center;
-    align-items: center;
-    font-size: 1.2em;
-    font-weight: bolder;
     align-items: baseline;
+    padding-bottom: 3%;
 }
 
-#display div {
-    flex-basis: 50%;
-    font-size: 5em;
+.tap-to-start {
+    color: gray;
+    font-size: 0.3em;
+    justify-self:center;
 }
 
-#display div .sup {
-    font-size: 80%;
-    vertical-align: 20%;
+span:nth-child(2) {
+    min-width: 3em;
+    font-size: 1em;
+    text-align: center;
 }
 
-#display span {
-    flex-basis: 25%;
-    font-size: 2.5em;
-    text-align: left;
-}
-
-#display span:first-child {
+span:first-child {
+    font-size: 0.3em;
     text-align: right;
 }
 
-#display .tap-to-start {
-    color: gray;
+span:last-child {
+    font-size: 0.3em;
+    text-align: left;
+}
+
+span.sup {
+    font-size: 0.8em;
 }
 
 .text-red {

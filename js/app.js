@@ -8,7 +8,7 @@ const SCALES = new Map([
 ]);
 const SCALE_KEYS = Array.from(SCALES.keys());
 
-const scaleText = document.createElement('div');
+const scaleText = document.createElement('span');
 const lampL = document.createElement('span');
 const lampR = document.createElement('span');
 
@@ -28,7 +28,7 @@ async function appStart(display) {
 
     scaleText.innerText = '？'
     lampL.innerText = '♭'
-    lampR.innerText = '#'
+    lampR.innerText = '♯'
     display.append(lampL, scaleText, lampR);
 
     try {
@@ -62,7 +62,7 @@ async function appStart(display) {
             // 両端は無視してしまう
             if (!maxIndex || maxIndex === bufLen - 1) {
                 Array.from(display.children).forEach(function (e) { e.classList = [] });
-                scaleText.innerText = '?'
+                scaleText.innerText = '？'
                 return;
             }
 
